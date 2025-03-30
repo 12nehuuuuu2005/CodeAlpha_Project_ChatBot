@@ -1,0 +1,131 @@
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+class Room {
+    private String roomNumber;
+    private String roomType;
+    private boolean isAvailable;
+
+    public Room(String roomNumber, String roomType) {
+        this.roomNumber = roomNumber;
+        this.roomType = roomType;
+        this.isAvailable = true;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailability(boolean availability) {
+        isAvailable = availability;
+    }
+}
+
+public class HotelReservationSystem {
+    private Map<String, Room> rooms;
+    private Map<String, String> bookings;
+
+    public HotelReservationSystem() {
+        this.rooms = new HashMap<>();
+        this.bookings = new HashMap<>();
+
+        // Initialize rooms
+        rooms.put("101", new Room("101", "Single"));
+        rooms.put("102", new Room("102", "Double"));
+        rooms.put("103", new Room("103", "Suite"));
+    }
+
+    public void displayAvailableRooms() {
+        System.out.println("Available Rooms:");
+        for (Room room : rooms.values()) {
+            if (room.isAvailable()) {
+                System.out.println("Room Number: " + room.getRoomNumber() + ", Room Type: " + room.getRoomType());
+            }
+        }
+    }
+
+    public void bookRoom(String roomNumber, String guestName) {
+        if (rooms.containsKey(roomNumber)) {
+            Room room = rooms.get(roomNumber);
+            if (room.isAvailable()) {
+                room.setAvailability(false);
+                bookings.put(roomNumber, guestName);
+                System.out.println("Room booked successfully!");
+            } else {
+                System.out.println("Room is not available!");
+            }
+        } else {
+            System.out.println("Room not found!");
+        }
+    }
+
+    public void cancelBooking(String roomNumber) {
+        if (bookings.containsKey(roomNumber)) {
+            bookings.remove(roomNumber);
+            Room room = rooms.get(roomNumber);
+            room.setAvailability(true);
+            System.out.println("Booking cancelled successfully!");
+        } else {
+            System.out.println("Booking not found!");
+        }
+    }
+
+    public void displayBookingDetails() {
+        System.out.println("Booking Details:");
+        for (Map.Entry<String, String> entry : bookings.entrySet()) {
+            System.out.println("Room Number: " + entry.getKey() + ", Guest Name: " + entry.getValue());
+        }
+    }
+
+    public static void main(String[] args) {
+        HotelReservationSystem hotelSystem = new HotelReservationSystem();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Hotel Reservation System");
+            System.out.println("1. Display available rooms");
+            System.out.println("2. Book a room");
+            System.out.println("3. Cancel a booking");
+            System.out.println("4. Display booking details");
+            System.out.println("5. Exit");
+
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    hotelSystem.displayAvailableRooms();
+                    break;
+                case 2:
+                    System.out.print("Enter room number: ");
+                    String roomNumber = scanner.next();
+                    System.out.print("Enter guest name: ");
+                    String guestName = scanner.next();
+                    hotelSystem.bookRoom(roomNumber, guestName);
+                    break;
+                case 3:
+                    System.out.print("Enter room number: ");
+                    roomNumber = scanner.next();
+                    hotelSystem.cancelBooking(roomNumber);
+                    break;
+                case 4:
+                    hotelSystem.displayBookingDetails();
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
